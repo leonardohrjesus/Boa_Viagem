@@ -1,6 +1,12 @@
 package android.leonardo.com.br.boa_viagem;
 
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
+import android.accounts.AccountManagerCallback;
+import android.accounts.AccountManagerFuture;
+import android.accounts.AuthenticatorException;
+import android.accounts.OperationCanceledException;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -10,9 +16,22 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
+
+
+import com.google.api.client.googleapis.extensions.android.accounts.GoogleAccountManager;
+
+import java.io.IOException;
+
+
+
+
 public class BoaViagemActivity extends AppCompatActivity
 {
-    private static final String MANTER_CONECTADO = "manter_conectado";
+    // novos atributos
+    private SharedPreferences preferencias;
+    private GoogleAccountManager accountManager;
+    private Account conta;
+
     private CheckBox manterConectado;
     private EditText usuario;
     private EditText senha;
@@ -22,15 +41,21 @@ public class BoaViagemActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
 
+        accountManager = new GoogleAccountManager(this);
+
         usuario = (EditText) findViewById(R.id.usuario);
         senha = (EditText) findViewById(R.id.senha);
-
         manterConectado = (CheckBox) findViewById(R.id.manterConectado);
-        SharedPreferences preferencias = getPreferences(MODE_PRIVATE);
-        boolean conectado =
-                preferencias.getBoolean(MANTER_CONECTADO, false);
+
+        preferencias = getSharedPreferences(Constantes.PREFERENCIAS, MODE_PRIVATE);
+        boolean conectado = preferencias
+                .getBoolean(Constantes. MANTER_CONECTADO, false);
+
+
         if(conectado){
-            startActivity(new Intent(this, DashboardActivity.class));
+
+            iniciarDashboard();
+
         }
     }
 
@@ -38,23 +63,60 @@ public class BoaViagemActivity extends AppCompatActivity
         String usuarioInformado = usuario.getText().toString();
         String senhaInformada = senha.getText().toString();
 
-        if("leitor".equals(usuarioInformado) &&
-                "123".equals(senhaInformada)) {
-
-            SharedPreferences preferencias = getPreferences(MODE_PRIVATE);
-            SharedPreferences.Editor editor = preferencias.edit();
-            editor.putBoolean(MANTER_CONECTADO, manterConectado.isChecked());
-            editor.commit();
+        autenticar(usuarioInformado, senhaInformada);
 
 
-            startActivity(new Intent(this,DashboardActivity.class));
-        } else{
-            String mensagemErro = getString(R.string.erro_autenticao);
-            Toast toast = Toast.makeText(this, mensagemErro,
-                    Toast.LENGTH_SHORT);
-            toast.show();
-        }
     }
+
+    private void iniciarDashboard(){
+        startActivity(new Intent(this, DashboardActivity.class));
+    }
+
+    private void autenticar(final String nomeConta, String senha) {
+
+        conta = accountManager.getAccountByName(nomeConta);
+
+        if(conta == null){
+            Toast.makeText(this, R.string.conta_inexistente,
+                    Toast.LENGTH_LONG).show();
+            return;
+        }
+
+
+        Bundle bundle = new Bundle();
+        bundle.putString(AccountManager.KEY_ACCOUNT_NAME, nomeConta);
+        bundle.putString(AccountManager.KEY_PASSWORD, senha);
+        accountManager.getAccountManager().confirmCredentials(conta , bundle, this, new AutenticacaoCallback(), null);
+    }
+
+    private class AutenticacaoCallback     implements AccountManagerCallback<Bundle> {
+        @Override
+        public void run(AccountManagerFuture<Bundle> future) {
+            try {
+                Bundle bundle = future.getResult();
+                if(bundle.getBoolean(AccountManager.KEY_BOOLEAN_RESULT)) {
+                    iniciarDashboard();
+                }else {
+                    Toast.makeText(getBaseContext(),
+                            getString(R.string.erro_autenticacao),
+                            Toast.LENGTH_LONG).show();
+                }
+            } catch (OperationCanceledException e) {
+// usuário cancelou a operação
+            } catch (AuthenticatorException e) {
+// possível falha no autenticador
+            } catch (IOException e) {
+// possível falha de comunicação
+            }
+
+
+        }
+
+    }
+
+
+
+
 
 }
 

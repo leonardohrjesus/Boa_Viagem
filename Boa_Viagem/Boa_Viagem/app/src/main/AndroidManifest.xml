@@ -15,6 +15,15 @@
         android:name="android.leonardo.com.br.boa_viagem.provider.permission.WRITE_PROVIDER"/>
 
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.USE_CREDENTIALS" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
+
+    <uses-permission
+        android:name="android.permission.MANAGE_ACCOUNTS"
+        />
+
     <application
         android:theme="@style/Theme.AppCompat">
         <activity

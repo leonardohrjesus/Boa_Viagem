@@ -44,6 +44,8 @@
     <string name="erro_salvar">Erro Salvar</string>
     <string name="confirmacao_exclusao_gasto">Confirmacao da exclusao de gastos</string>
     <string name="registro_deletado">Deletado</string>
+    <string name="conta_inexistente">Conta nao existe</string>
+    <string name="erro_autenticacao">Erro de autenticacao</string>
     <string-array name="categoria_gasto">
         <item>Alimentação</item>
         <item>Combustível</item>
