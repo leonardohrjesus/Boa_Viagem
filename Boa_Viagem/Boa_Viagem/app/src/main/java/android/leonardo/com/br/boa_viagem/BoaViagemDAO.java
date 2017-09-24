@@ -41,7 +41,7 @@ public class BoaViagemDAO  extends SQLiteOpenHelper {
     }
 
 
-
+//Criacao das tabelas
     @Override
     public void onCreate(SQLiteDatabase db) {
         String QUERY_COLUNA_VIAGEM = "CREATE TABLE " + TABELA_VIAGEM + " ( " + V_COLUNA_ID + " INTEGER PRIMARY KEY," +
@@ -61,6 +61,8 @@ public class BoaViagemDAO  extends SQLiteOpenHelper {
 
     }
 
+
+    //caso queria modificar um campo
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
@@ -70,7 +72,7 @@ public class BoaViagemDAO  extends SQLiteOpenHelper {
     /////////////////////// crud da tabela viagem /////////////////////////////////////
 
     //insert na tabela viagen
-    void  addViagem(Viagem viagem){
+    String addViagem(Viagem viagem){
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -84,11 +86,12 @@ public class BoaViagemDAO  extends SQLiteOpenHelper {
         db.insert(TABELA_VIAGEM,null,values);
 
         db.close();
+        return null;
     }
 
 
     //update na tabela viagem
-    void atualizarViagem(Viagem viagem){
+    String atualizarViagem(Viagem viagem){
         SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -106,6 +109,7 @@ public class BoaViagemDAO  extends SQLiteOpenHelper {
         db.close();
 
 
+        return id;
     }
 
 
@@ -122,6 +126,8 @@ public class BoaViagemDAO  extends SQLiteOpenHelper {
 
 
 
+
+    //select list
     public List<Viagem> listartodasasviagens(){
         List<Viagem> listaviagens  = new ArrayList<Viagem>();
         String query = "SELECT  * FROM "+ TABELA_VIAGEM;
@@ -151,6 +157,8 @@ public class BoaViagemDAO  extends SQLiteOpenHelper {
     }
 
 
+
+    //select calculando valor
     public double calcularTotalGasto(String id) {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery(
@@ -162,19 +170,15 @@ public class BoaViagemDAO  extends SQLiteOpenHelper {
         return total;
     }
 
+
+    //select simples
     public Viagem prepararEdicao(String id) {
         SQLiteDatabase db = this.getReadableDatabase();
 
-     /*  Cursor cursor = db.rawQuery( " SELECT "+ V_COLUNA_TIPOVIAGEM + ", "+ V_COLUNA_DESTINO + " , " + V_COLUNA_DATACHEGADA + " , "
-                                    + V_COLUNA_DATASAIDA+ " , " + V_COLUNA_QUANTIDADEPESSOAS +" , "+ V_COLUNA_ORCAMENTO+ " FROM "+
-                                    TABELA_VIAGEM + " WHERE "+ V_COLUNA_ID + " = ? ",  new String[]{ id });*/
 
 
         Cursor cursor = db.rawQuery("SELECT  tipoviagem, destino, datachegada, datasaida, quantidadespessoas, orcamento FROM tb_viagem" +
                 " WHERE  _id = ?", new String[] { id } );
-        /*String query =  " SELECT "+ V_COLUNA_TIPOVIAGEM + ", "+ V_COLUNA_DESTINO + " , " + V_COLUNA_DATACHEGADA + ","
-                + V_COLUNA_DATASAIDA+ " , " + V_COLUNA_QUANTIDADEPESSOAS +" , "+ V_COLUNA_ORCAMENTO+ " FROM "+
-                TABELA_VIAGEM + "WHERE "+ V_COLUNA_ID + " id = ? ", new String[]{String.valueOf(id)};*/
 
 
 
@@ -201,6 +205,8 @@ public class BoaViagemDAO  extends SQLiteOpenHelper {
 
     /////////////////////// crud da tabela gasto /////////////////////////////////////
 
+
+    //insercao
     void addgasto(Gasto gasto){
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -218,18 +224,12 @@ public class BoaViagemDAO  extends SQLiteOpenHelper {
         db.close();
     }
 
+    //select list
     public List<Gasto> listartodososgastos(String id){
         SQLiteDatabase db = this.getWritableDatabase();
         List<Gasto> listagasto  = new ArrayList<Gasto>();
 
         Cursor cursor = db.rawQuery ("SELECT  _id , data , descricao , valor , categoria , local FROM tb_gasto WHERE viagemid = ?", new String[]{id });
-
-        /*String query = "SELECT " + G_COLUNA_ID+ ", "+G_COLUNA_DATA +", "+ G_COLUNA_DESCRICAO+", "+ G_COLUNA_VALOR +", "+ G_COLUNA_CATEGORIA+", " + G_COLUNA_LOCAL+ " FROM "+
-                TABELA_VIAGEM + " WHERE "+ G_COLUNA_ID+" = ?";*/
-
-
-
-
 
 
         if (cursor.moveToFirst()){
@@ -252,21 +252,19 @@ public class BoaViagemDAO  extends SQLiteOpenHelper {
 
     }
 
+    //delete gasto
+
     public void removerGasto(String data,String categoria,String local,String descricao, Double valor) {
         String valoconv = valor.toString();
 
         SQLiteDatabase db = this.getWritableDatabase();
         String where [] = new String[]{ data,categoria,local,descricao,valoconv };
-     /*   db.execSQL("DELETE FROM "+ TABELA_GASTO+ " WHERE "+ G_COLUNA_DATA+ " = " + data + " AND "+ G_COLUNA_CATEGORIA+ " = " +categoria+" AND "
-                 + G_COLUNA_LOCAL +" = "+ local + " AND "+ G_COLUNA_DESCRICAO +" = "+descricao+ " AND "  +G_COLUNA_VALOR+" = "+valor);*/
+
         db.delete("tb_gasto", " data = ? AND  categoria = ? AND local = ? AND descricao = ? AND valor = ?  ", where);
         db.close();
 
 
     }
-
-
-
 
 
 

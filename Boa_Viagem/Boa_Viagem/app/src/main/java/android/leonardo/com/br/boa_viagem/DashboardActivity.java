@@ -18,15 +18,16 @@ public class DashboardActivity  extends AppCompatActivity {
 
     private String opcao;
     private TextView textView;
-    private int featureId;
-    private MenuItem item;
 
+
+    //criando Tela
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.dashboard);
 
     }
 
+    //botao opcoes
     public void selecionarOpcao(View view) {
         switch (view.getId()) {
             case R.id.nova_viagem:
@@ -57,12 +58,14 @@ public class DashboardActivity  extends AppCompatActivity {
         }
     }
 
+    //opcao criar menu em cima sair
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.dashboard_menu, menu);
         return true;
     }
+    //opcao menu em cima sair
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -74,5 +77,11 @@ public class DashboardActivity  extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    //activity destruida
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 }

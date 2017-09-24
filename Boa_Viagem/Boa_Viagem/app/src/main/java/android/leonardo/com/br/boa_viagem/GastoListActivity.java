@@ -28,7 +28,7 @@ public class GastoListActivity extends ListActivity implements AdapterView.OnIte
     BoaViagemDAO db = new BoaViagemDAO(this);
 
     private AlertDialog dialogConfirmacao;
-    private int gastoselecionado;
+
     private String data;
     private String descricao ;
     private double valor ;
@@ -186,10 +186,6 @@ public class GastoListActivity extends ListActivity implements AdapterView.OnIte
 
     }
 
-   /* @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }*/
 
     private void atualizaoucriarlista(){
 
@@ -198,9 +194,14 @@ public class GastoListActivity extends ListActivity implements AdapterView.OnIte
         adapter = new SimpleAdapter(this, listarGastos(),  R.layout.lista_gasto, de, para);
         adapter.setViewBinder(new GastoViewBinder());
         setListAdapter(adapter);
-        //adapter.notifyDataSetChanged();
         getListView().setOnItemClickListener( this);
 
+    }
+
+    //activity destruida
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 
 

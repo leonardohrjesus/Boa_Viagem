@@ -1,0 +1,5 @@
+<root>
+    <item name='com.google.api.client.util.DateTime'>
+        <annotation name='java.lang.Deprecated' />
+    </item>
+</root>

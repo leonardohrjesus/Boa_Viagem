@@ -1,5 +1,7 @@
 package android.leonardo.com.br.boa_viagem;
 
+import com.google.api.client.http.HttpRequestInitializer;
+
 /**
  * Created by Amministratore on 20/08/2017.
  */
@@ -18,7 +20,8 @@ public class Constantes {
     public static final String AUTH_TOKEN_TYPE =
             "oauth2:https://www.googleapis.com/auth/calendar";
     public static final String API_KEY =
-            "AIzaSyAYMxeKqKgfPnanoEzfk_ypFB7NqFnzccc";
+            "AIzaSyBoMxFbt3O7MjBwcK49h1alK2LGMK2SOV4";
+
 
     public static final String PREFERENCIAS = "preferencias_globais";
     public static final String MANTER_CONECTADO = "manter_conectado";

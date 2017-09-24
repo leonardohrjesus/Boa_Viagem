@@ -1,5 +1,9 @@
 package android.leonardo.com.br.boa_viagem;
 
+import android.widget.Button;
+
+import java.util.Date;
+
 /**
  * Created by Amministratore on 20/08/2017.
  */
@@ -10,7 +14,9 @@ public class Viagem {
     private String destino;
     private int tipoViagem;
     private String dataChegada;
+    private Date dateChegada;
     private String  dataSaida;
+    private Date dateSaida;
     private double orcamento;
     private int  quantidadePessoas;
     public Viagem(){}
@@ -65,8 +71,30 @@ public class Viagem {
         return dataChegada;
     }
 
+
+
+    // tipo date
+
+    public Date getDateChegada() {
+        return dateChegada;
+    }
+
+
+    public void setDateChegada(Date dateChegada) {
+        this.dateChegada= dateChegada;
+    }
+
     public void setDataChegada(String dataChegada) {
         this.dataChegada = dataChegada;
+    }
+
+    //tipo date
+    public Date  getDateSaida() {
+        return dateSaida;
+    }
+
+    public void setDateSaida(Date dateSaida) {
+        this.dateSaida = dateSaida;
     }
 
     public String getDataSaida() {
@@ -92,4 +120,7 @@ public class Viagem {
     public void setQuantidadePessoas(int quantidadePessoas) {
         this.quantidadePessoas = quantidadePessoas;
     }
+
+
+
 }

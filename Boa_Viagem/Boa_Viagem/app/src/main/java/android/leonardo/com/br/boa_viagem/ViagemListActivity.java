@@ -9,8 +9,6 @@ import android.preference.PreferenceManager;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.SimpleAdapter;
 
@@ -33,13 +31,12 @@ public class ViagemListActivity extends ListActivity implements AdapterView.OnIt
     private AlertDialog alertDialog;
     private Intent intent;
     private SimpleAdapter adapter;
-    int VIAGENS = 1;
 
     BoaViagemDAO db = new BoaViagemDAO(this);
 
-    ArrayAdapter<String> adpter;
-    ArrayList<String> arraylist;
-    LinearLayout layoutListaViagem;
+
+
+
 
     // atributo de instancia
     private List<Map<String, Object>> viagens;
@@ -150,6 +147,7 @@ public class ViagemListActivity extends ListActivity implements AdapterView.OnIt
                 intent = new Intent(this, ViagemActivity.class);
                 intent.putExtra(Constantes.VIAGEM_ID, id);
                 startActivity(intent);
+
                 break;
             case 1:
                 intent = new Intent(this, GastoActivity.class);
@@ -161,6 +159,7 @@ public class ViagemListActivity extends ListActivity implements AdapterView.OnIt
                 intent = new Intent(this, GastoListActivity.class);
                 intent.putExtra(Constantes.VIAGEM_ID,id);
                 startActivity(intent);
+
                 break;
             case 3:
                 dialogConfirmacao.show();
@@ -169,14 +168,20 @@ public class ViagemListActivity extends ListActivity implements AdapterView.OnIt
                 db.apagarViagem(id);
 
                 getListView().invalidateViews();
+
                 break;
             case DialogInterface.BUTTON_NEGATIVE:
                 dialogConfirmacao.dismiss();
+
                 break;
         }
         atualizaroucriarlista();
 
+
+
     }
+
+
 
     //classe responsalvel de controlar barra de progresso
     private class ViagemViewBinder implements SimpleAdapter.ViewBinder {
@@ -208,22 +213,17 @@ public class ViagemListActivity extends ListActivity implements AdapterView.OnIt
         super.onDestroy();
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-// A activity está prestes a se tornar visível
-    }
     private  void atualizaroucriarlista(){
+
 
         String[] de = { "imagem", "destino", "data",  "total", "barraProgresso" };
         int[] para = { R.id.tipoViagem, R.id.destino, R.id.data, R.id.valor, R.id.barraProgresso };
-        //verificar se adapter ja foi criado
 
         adapter =   new SimpleAdapter(this, listarViagens(),   R.layout.lista_viagem, de, para);
         adapter.setViewBinder(new ViagemViewBinder());
         setListAdapter(adapter);
 
-        adapter.notifyDataSetChanged();
+//        adapter.notifyDataSetChanged();
 
 
         getListView().setOnItemClickListener(this);

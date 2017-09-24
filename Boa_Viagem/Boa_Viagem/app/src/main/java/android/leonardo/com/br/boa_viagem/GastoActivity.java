@@ -2,6 +2,7 @@ package android.leonardo.com.br.boa_viagem;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -35,7 +36,7 @@ public class GastoActivity extends AppCompatActivity {
     BoaViagemDAO  db = new BoaViagemDAO(this);
 
 
-
+//criar tela de gasto
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.gasto);
@@ -64,13 +65,20 @@ public class GastoActivity extends AppCompatActivity {
                 String g_data =  (String) dataGasto.getText();
 
 
+                //verificar se existe alguma viagem selecionada
+                id = getIntent().getStringExtra(VIAGEM_ID);
+                if(id  ==   null){
+                    irlistarviagem();
+                }
+                else
+
                 if (g_descricao.isEmpty() || g_valor.isEmpty()|| g_local.isEmpty()|| g_data.isEmpty()) {
                     descricao.setError("Este campo è obrigatorio");
                     valor.setError("Este campo è obrigatorio");
                     local.setError("Este campo è obrigatorio");
                     dataGasto.setError("Este campo è obrigatorio");
                 }else{
-                    id = getIntent().getStringExtra(VIAGEM_ID);
+
                     db.addgasto(new Gasto(g_data,g_categoria,g_descricao,Double.parseDouble(g_valor),g_local,Integer.parseInt(id)));
                     Toast.makeText(GastoActivity.this,"Gasto inserido com sucesso", Toast.LENGTH_LONG).show();
                     limparCampos();
@@ -87,6 +95,17 @@ public class GastoActivity extends AppCompatActivity {
 
 
     }
+
+
+    public void irlistarviagem (){
+
+        Intent irlistarviagem = new Intent(this,ViagemListActivity.class);
+        startActivity(irlistarviagem);
+        Toast.makeText(GastoActivity.this,"Por favor selecionar alguma Viagem!", Toast.LENGTH_LONG).show();
+;
+
+    }
+
 
     public void selecionarData(View view){
         showDialog(view.getId());
@@ -156,6 +175,12 @@ public class GastoActivity extends AppCompatActivity {
         dataGasto.setText(dia + "/" + (mes+1) + "/" + ano);
         categoria.setAdapter(adapter);
 
+    }
+
+    //activity destruida
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 
 

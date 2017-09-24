@@ -17,12 +17,12 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 
-
-import com.google.api.client.googleapis.extensions.android.accounts.GoogleAccountManager;
+import com.google.api.client.googleapis.extensions.android2.auth.GoogleAccountManager;
 
 import java.io.IOException;
 
-
+import static android.leonardo.com.br.boa_viagem.Constantes.NOME_CONTA;
+import static android.leonardo.com.br.boa_viagem.Constantes.TOKEN_ACESSO;
 
 
 public class BoaViagemActivity extends AppCompatActivity
@@ -47,19 +47,30 @@ public class BoaViagemActivity extends AppCompatActivity
         senha = (EditText) findViewById(R.id.senha);
         manterConectado = (CheckBox) findViewById(R.id.manterConectado);
 
-        preferencias = getSharedPreferences(Constantes.PREFERENCIAS, MODE_PRIVATE);
-        boolean conectado = preferencias
-                .getBoolean(Constantes. MANTER_CONECTADO, false);
+      //  preferencias = getPreferences( MODE_PRIVATE);
+     preferencias = getSharedPreferences(Constantes.PREFERENCIAS, MODE_PRIVATE);
+        boolean conectado = preferencias.getBoolean(Constantes. MANTER_CONECTADO, false);
+
 
 
         if(conectado){
-
-            iniciarDashboard();
+            solicitarAutorizacao();
 
         }
+
+
     }
 
     public void entrarOnClick(View v) {
+
+        SharedPreferences preferencias =
+                getSharedPreferences(Constantes.PREFERENCIAS, MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferencias.edit();
+        editor.putBoolean(Constantes.MANTER_CONECTADO,
+                manterConectado.isChecked());
+        editor.commit();
+
+
         String usuarioInformado = usuario.getText().toString();
         String senhaInformada = senha.getText().toString();
 
@@ -74,7 +85,11 @@ public class BoaViagemActivity extends AppCompatActivity
 
     private void autenticar(final String nomeConta, String senha) {
 
-        conta = accountManager.getAccountByName(nomeConta);
+
+        String tipo = "com.google";
+        conta = new Account(nomeConta,tipo);
+
+
 
         if(conta == null){
             Toast.makeText(this, R.string.conta_inexistente,
@@ -94,9 +109,12 @@ public class BoaViagemActivity extends AppCompatActivity
         public void run(AccountManagerFuture<Bundle> future) {
             try {
                 Bundle bundle = future.getResult();
+
                 if(bundle.getBoolean(AccountManager.KEY_BOOLEAN_RESULT)) {
+                    solicitarAutorizacao();
                     iniciarDashboard();
-                }else {
+
+                } else {
                     Toast.makeText(getBaseContext(),
                             getString(R.string.erro_autenticacao),
                             Toast.LENGTH_LONG).show();
@@ -114,8 +132,60 @@ public class BoaViagemActivity extends AppCompatActivity
 
     }
 
+    private void solicitarAutorizacao() {
+        String tokenAcesso = preferencias.getString(TOKEN_ACESSO, null);
+        String nomeConta = preferencias.getString(NOME_CONTA, null);
+        if(tokenAcesso != null){
+            accountManager.invalidateAuthToken(tokenAcesso);
+            String tipo = "com.google";
+            conta = new Account(nomeConta,tipo);
+
+        }
+        accountManager.getAccountManager().getAuthToken(conta,
+                        Constantes.AUTH_TOKEN_TYPE,
+                        null,
+                        this,
+                        new AutorizacaoCallback(),
+                        null);
+    }
 
 
+
+    private class AutorizacaoCallback   implements AccountManagerCallback<Bundle> {
+        @Override
+        public void run(AccountManagerFuture<Bundle> future) {
+            try {
+                Bundle bundle = future.getResult();
+                String nomeConta =
+                        bundle.getString(AccountManager.KEY_ACCOUNT_NAME);
+                String tokenAcesso =
+                        bundle.getString(AccountManager.KEY_AUTHTOKEN);
+                gravarTokenAcesso(nomeConta, tokenAcesso);
+                iniciarDashboard();
+            } catch (OperationCanceledException e) {
+// usuário cancelou a operação
+            } catch (AuthenticatorException e) {
+// possível falha no autenticador
+            } catch (IOException e) {
+// possível falha de comunicação
+            }
+        }
+
+    }
+
+    private void gravarTokenAcesso(String nomeConta, String tokenAcesso) {
+        SharedPreferences.Editor editor = preferencias.edit();
+        editor.putString(NOME_CONTA, nomeConta);
+        editor.putString(TOKEN_ACESSO, tokenAcesso);
+        editor.commit();
+    }
+
+
+    //activity destruida
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
 
 
 }
