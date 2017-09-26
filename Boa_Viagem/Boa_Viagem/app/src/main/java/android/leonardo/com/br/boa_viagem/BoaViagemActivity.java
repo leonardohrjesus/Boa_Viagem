@@ -63,6 +63,8 @@ public class BoaViagemActivity extends AppCompatActivity
 
     public void entrarOnClick(View v) {
 
+
+
         SharedPreferences preferencias =
                 getSharedPreferences(Constantes.PREFERENCIAS, MODE_PRIVATE);
         SharedPreferences.Editor editor = preferencias.edit();
@@ -73,6 +75,13 @@ public class BoaViagemActivity extends AppCompatActivity
 
         String usuarioInformado = usuario.getText().toString();
         String senhaInformada = senha.getText().toString();
+
+        if (usuarioInformado.isEmpty())
+            usuario.setError("Por favor inserir seu email");
+        else
+        if  (senhaInformada.isEmpty())
+            senha.setError("Por favor inserir sua senha");
+        else
 
         autenticar(usuarioInformado, senhaInformada);
 
@@ -161,7 +170,6 @@ public class BoaViagemActivity extends AppCompatActivity
                 String tokenAcesso =
                         bundle.getString(AccountManager.KEY_AUTHTOKEN);
                 gravarTokenAcesso(nomeConta, tokenAcesso);
-                iniciarDashboard();
             } catch (OperationCanceledException e) {
 // usuário cancelou a operação
             } catch (AuthenticatorException e) {
